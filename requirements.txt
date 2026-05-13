@@ -6,3 +6,6 @@ streamlit
 whitenoise
 dj-database-url
 psycopg2-binary
+djangorestframework
+djangorestframework-authtoken
+requests
