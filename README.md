@@ -99,6 +99,23 @@ streamlit run app.py
 
 Catatan: `app.py` merender HTML template statis (Django template tags tidak diproses). Jika Anda ingin integrasi dinamis antara Streamlit dan Django, kita perlu menambahkan API endpoints di Django dan panggil dari Streamlit.
 
+### Deploying to Streamlit Cloud
+
+If you deploy this repository to Streamlit Cloud and only want the Streamlit app to run there, do NOT use the project's full `requirements.txt` (it includes server-side packages like `psycopg2-binary` which require system libraries). Instead create a minimal requirements file and point Streamlit Cloud to it.
+
+1. Use `requirements-streamlit.txt` (already added) which contains only the packages needed by `app.py`:
+
+```text
+streamlit
+requests
+```
+
+2. On Streamlit Cloud, go to your app's settings → Advanced → Requirements file and set it to `requirements-streamlit.txt`, then redeploy.
+
+3. If you need the Streamlit app to talk to the Django backend, keep your deployed Django app separate (e.g., Docker/Render/Heroku) and configure the backend URL in the Streamlit app settings or via environment variables.
+
+If you want, I can also add a small `app_secrets.example.toml` or instructions to store the backend URL securely for Streamlit Cloud.
+
 ## File penting
 - `manage.py` — entrypoint Django.
 - `lms_project/` — konfigurasi project.
