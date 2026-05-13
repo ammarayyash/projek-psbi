@@ -101,25 +101,52 @@ Catatan: `app.py` merender HTML template statis (Django template tags tidak dipr
 
 ### Deploying to Streamlit Cloud
 
-If you deploy this repository to Streamlit Cloud and only want the Streamlit app to run there, do NOT use the project's full `requirements.txt` (it includes server-side packages like `psycopg2-binary` which require system libraries). Instead create a minimal requirements file and point Streamlit Cloud to it.
+**IMPORTANT:** The full `requirements.txt` contains server-side packages that fail on Streamlit Cloud. Use `requirements-streamlit.txt` instead.
 
-1. Use `requirements-streamlit.txt` (already added) which contains only the packages needed by `app.py`:
+#### Step-by-step setup:
 
-```text
-streamlit
-requests
-```
+1. **Push repository to GitHub:**
+   ```bash
+   git add .
+   git commit -m "Add Streamlit app and deployment configs"
+   git push origin main
+   ```
 
-2. On Streamlit Cloud, go to your app's settings → Advanced → Requirements file and set it to `requirements-streamlit.txt`, then redeploy.
+2. **Connect to Streamlit Cloud:**
+   - Go to https://streamlit.io/cloud
+   - Click "New app" → select your GitHub repo → select branch `main` → set main file path to **`app.py`**
+   - Click "Deploy"
 
-3. If you need the Streamlit app to talk to the Django backend, keep your deployed Django app separate (e.g., Docker/Render/Heroku) and configure the backend URL in the Streamlit app settings or via environment variables.
+3. **Fix requirements error:**
+   - If you get an error like "Error installing requirements", go to your app's **Manage App** (top-right menu)
+   - Go to **Settings** → **Advanced** → **Requirements file**
+   - Change from `requirements.txt` to `requirements-streamlit.txt`
+   - Click "Save" → Streamlit will redeploy automatically
 
-If you want, I can also add a small `app_secrets.example.toml` or instructions to store the backend URL securely for Streamlit Cloud.
+4. **(Optional) Add backend URL to Streamlit Secrets:**
+   - In **Manage App** → **Secrets**, paste:
+   ```toml
+   backend_url = "https://your-deployed-django-backend.render.com"
+   ```
+   - Replace with your actual Django backend URL (Render/Heroku/Docker)
+   - The Streamlit app will use this URL for the Interactive mode
+
+5. **Configure Django backend separately:**
+   - Deploy Django on Render/Heroku/Docker (see "Deploy with Docker" section above)
+   - Ensure Django is accessible from the Streamlit app (allow CORS if needed)
+   - Test by using Streamlit's "Interactive" mode with the backend URL
+
+#### Files involved:
+- `app.py` — Streamlit app entrypoint
+- `requirements-streamlit.txt` — minimal dependencies (use this for Streamlit Cloud!)
+- `.streamlit/config.toml` — Streamlit configuration
+- `.streamlit/secrets.example.toml` — template for backend URL (copy to Secrets in Streamlit Cloud)
 
 ## File penting
 - `manage.py` — entrypoint Django.
 - `lms_project/` — konfigurasi project.
 - `dashboard/` — aplikasi utama dengan templates dan static files.
+- `DEPLOYMENT.md` — detailed deployment guide untuk Streamlit Cloud, Render, Docker, etc.
 
 ## Lisensi
 Lisensi MIT (file `LICENSE`).

@@ -23,7 +23,10 @@ if mode == "Home":
 elif mode == "Interactive":
     import requests
     st.header("Interactive via Django API")
-    backend = st.text_input('Backend base URL', 'http://localhost:8000')
+    
+    # Try to read backend URL from Streamlit secrets (for Cloud deployment)
+    default_backend = st.secrets.get("backend_url", "http://localhost:8000")
+    backend = st.text_input('Backend base URL', default_backend)
     username = st.text_input('Username (existing Django user)')
 
     if backend and username:
